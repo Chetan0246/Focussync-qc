@@ -1,0 +1,212 @@
+/* Focus Score Trend Styles - Advanced Portfolio Version */
+
+.focus-trend {
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-md);
+  -webkit-backdrop-filter: var(--blur-md);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+  animation: fadeInUp 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.focus-trend::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-secondary);
+  animation: gradientShift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+.trend-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.trend-title {
+  font-size: 22px;
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.trend-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.trend-stat {
+  text-align: center;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-base);
+}
+
+.trend-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+}
+
+.stat-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.stat-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.stat-value.good {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-value.fair {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.stat-value.poor {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Chart Container */
+.trend-chart-recharts {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom Tooltip */
+.focus-tooltip {
+  background: var(--bg-glass);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+}
+
+.focus-tooltip-label {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.focus-tooltip-score {
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0;
+}
+
+/* Score Guide */
+.score-guide {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all var(--transition-base);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.guide-item:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+}
+
+.guide-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.guide-dot.good {
+  background-color: #22c55e;
+  color: #22c55e;
+}
+
+.guide-dot.fair {
+  background-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.guide-dot.poor {
+  background-color: #ef4444;
+  color: #ef4444;
+}
+
+.guide-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .focus-trend {
+    padding: 20px;
+  }
+
+  .trend-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .trend-stats {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .score-guide {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  
+  .trend-stat {
+    flex: 1;
+  }
+}

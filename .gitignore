@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Production builds
+client/build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Misc
+*.pem
+*.key
+*.cert
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Server sessions database (if using file-based sessions)
+sessions/
+
+# MongoDB data (if running locally with data directory)
+data/
+data/db/
+
+# Optional: Uncomment if you want to ignore the README and UPGRADE guides
+# README.md
+# UPGRADE_GUIDE.md
+# CSS_ENHANCEMENTS.md

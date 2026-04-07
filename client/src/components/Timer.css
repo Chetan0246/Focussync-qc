@@ -1,0 +1,284 @@
+/* Timer Component Styles - Advanced Portfolio Version */
+
+.timer-container {
+  text-align: center;
+  padding: 50px 40px;
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
+  border-radius: var(--radius-xl);
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.6s ease-out;
+}
+
+.timer-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(34, 197, 94, 0.1),
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  );
+  animation: rotate 10s linear infinite;
+  opacity: 0.5;
+}
+
+.timer-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Circular Progress Container */
+.circular-progress-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 0 auto 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circular-progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.4));
+}
+
+.circular-progress-bg {
+  fill: none;
+  stroke: var(--bg-tertiary);
+  stroke-width: 8;
+}
+
+.circular-progress-bar {
+  fill: none;
+  stroke: url(#gradient);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+  filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.6));
+}
+
+.timer-display {
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.timer-text {
+  font-size: 80px;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+  animation: glow 2s ease-in-out infinite;
+  position: relative;
+}
+
+.timer-text::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Progress Bar (Fallback) */
+.timer-progress {
+  width: 100%;
+  height: 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.timer-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+.timer-progress-bar {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: var(--radius-full);
+  transition: width 1s linear;
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+  position: relative;
+}
+
+.timer-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  filter: blur(4px);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Status Indicator */
+.timer-status {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-running {
+  color: var(--accent-primary);
+  position: relative;
+}
+
+.status-running::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+.status-stopped {
+  color: var(--text-muted);
+}
+
+.status-stopped::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: var(--text-muted);
+  border-radius: 50%;
+}
+
+/* Timer animations */
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.4));
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px rgba(34, 197, 94, 0.8));
+  }
+}
+
+.timer-text.ending-soon {
+  background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pulse 1s infinite, glow 1s ease-in-out infinite;
+}
+
+.timer-text.ending-soon::after {
+  background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+}
+
+/* Glow ring animation */
+@keyframes glowRing {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+.glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 340px;
+  height: 340px;
+  border: 2px solid var(--accent-primary);
+  border-radius: 50%;
+  animation: glowRing 2s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timer-text {
+    font-size: 56px;
+    letter-spacing: 2px;
+  }
+
+  .timer-container {
+    padding: 32px 24px;
+  }
+
+  .circular-progress-container {
+    width: 260px;
+    height: 260px;
+  }
+
+  .glow-ring {
+    width: 280px;
+    height: 280px;
+  }
+}
