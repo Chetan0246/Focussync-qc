@@ -2,21 +2,24 @@
 
 A real-time collaborative study platform built with the MERN stack (MongoDB, Express, React, Node.js) and Socket.io.
 
-## 🌟 New Enhanced Features
+## 🌟 Features
 
-### Recently Added (To Impress Your Professor!)
+### Authentication
+1. **🔐 User Accounts** - Signup/Login with JWT tokens, persistent sessions
+2. **👤 User Profiles** - Join rooms with a username, see active users list
 
-1. **🔐 User Authentication** - Login/Signup with JWT tokens, persistent sessions
-2. **📊 Better Charts** - Beautiful charts using Recharts library
-3. **📈 Focus Score Trend** - Line chart showing focus score improvement over time
-4. **🏆 Achievement Badges** - Earn badges for milestones (First Session, Focus Master, Zen Master, etc.)
-5. **👤 User Names** - Join rooms with a username, see active users list
-6. **⌨️ Keyboard Shortcuts** - Space to start, E to end, D to test distraction
-7. **🔔 Desktop Notifications** - Browser notifications for session events
-8. **🔊 Sound Effects** - Audio feedback using Web Audio API (no external files)
-9. **📦 Demo Data Button** - Load sample data instantly for presentations
-10. **📥 Export Report** - Download session report as text file
-11. **🧑‍💻 Tech Stack Page** - Architecture diagram and viva questions at `/techstack`
+### Productivity
+3. **⌨️ Keyboard Shortcuts** - Space to start, E to end, D to test distraction
+4. **🔔 Desktop Notifications** - Browser notifications for session events
+5. **🔊 Sound Effects** - Audio feedback using Web Audio API (no external files)
+6. **📥 Export Report** - Download session report as text file
+
+### Analytics
+7. **📊 Analytics Dashboard** - Track sessions, focus scores, and productivity
+8. **📈 Focus Score Trend** - Line chart showing focus score improvement over time
+9. **🏆 Achievement Badges** - Earn badges for milestones
+10. **🔥 Activity Heatmap** - Visualize study patterns
+11. **📦 Demo Data** - Load sample data for presentations
 
 ---
 
