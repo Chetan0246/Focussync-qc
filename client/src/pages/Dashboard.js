@@ -20,29 +20,27 @@ function Dashboard() {
 
   // Fetch all analytics data on mount
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const sessionsRes = await axios.get(`${API_URL}/api/analytics/${roomId}`);
+        setSessions(sessionsRes.data || []);
+
+        const leaderboardRes = await axios.get(`${API_URL}/api/leaderboard`);
+        setLeaderboard(leaderboardRes.data || []);
+
+        const heatmapRes = await axios.get(`${API_URL}/api/heatmap`);
+        setHeatmap(heatmapRes.data || []);
+
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching analytics:', err);
+        setLoading(false);
+      }
+    };
     fetchData();
   }, [roomId]);
 
-  const fetchData = async () => {
-    try {
-      // Fetch sessions for this room
-      const sessionsRes = await axios.get(`${API_URL}/api/analytics/${roomId}`);
-      setSessions(sessionsRes.data || []);
-
-      // Fetch global leaderboard
-      const leaderboardRes = await axios.get(`${API_URL}/api/leaderboard`);
-      setLeaderboard(leaderboardRes.data || []);
-
-      // Fetch heatmap data
-      const heatmapRes = await axios.get(`${API_URL}/api/heatmap`);
-      setHeatmap(heatmapRes.data || []);
-
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching analytics:', err);
-      setLoading(false);
-    }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // Load demo data for presentation
   const loadDemoData = async () => {

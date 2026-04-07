@@ -1,6 +1,6 @@
 // Room Page - Main study room with real-time timer
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import Timer from '../components/Timer';
 import './Room.css';
@@ -182,6 +182,20 @@ function Room() {
     };
   }, [hasJoined, roomId]);
 
+  // Session handlers (memoized for useEffect deps)
+  const handleStartSession = useCallback(() => {
+    socket.emit('start_session', {
+      roomId,
+      duration: sessionDuration
+    });
+    playSound('start');
+    sendNotification('Session Started! 🚀', `Focus for ${sessionDuration} minutes.`);
+  }, [roomId, sessionDuration]);
+
+  const handleEndSession = useCallback(() => {
+    socket.emit('end_session', { roomId });
+  }, [roomId]);
+
   // Page Visibility API - Detect when user switches tabs
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -198,20 +212,16 @@ function Room() {
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
-      // Don't trigger if typing in input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      
-      // Space = Start session
+
       if (e.code === 'Space' && !isRunning && hasJoined) {
         e.preventDefault();
         handleStartSession();
       }
-      // E = End session
       if (e.code === 'KeyE' && isRunning && hasJoined) {
         e.preventDefault();
         handleEndSession();
       }
-      // D = Toggle distraction (for testing)
       if (e.code === 'KeyD' && isRunning && hasJoined) {
         socket.emit('distraction', { roomId });
       }
@@ -219,22 +229,7 @@ function Room() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isRunning, hasJoined, roomId]);
-
-  // Start a new session
-  const handleStartSession = () => {
-    socket.emit('start_session', {
-      roomId,
-      duration: sessionDuration
-    });
-    playSound('start');
-    sendNotification('Session Started! 🚀', `Focus for ${sessionDuration} minutes.`);
-  };
-
-  // End current session
-  const handleEndSession = () => {
-    socket.emit('end_session', { roomId });
-  };
+  }, [isRunning, hasJoined, roomId, handleStartSession, handleEndSession]);
 
   // Navigate to dashboard
   const handleViewDashboard = () => {

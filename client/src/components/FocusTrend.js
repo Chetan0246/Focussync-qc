@@ -8,8 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Area,
-  Defs
+  Area
 } from 'recharts';
 import './FocusTrend.css';
 
