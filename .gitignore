@@ -29,3 +29,6 @@ Desktop.ini
 
 # Testing
 coverage/
+
+# AI assistant config (not part of project)
+.qwen/
