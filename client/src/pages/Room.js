@@ -6,7 +6,11 @@ import Timer from '../components/Timer';
 import './Room.css';
 
 // Connect to backend server
-const socket = io.connect('http://localhost:5000');
+const socket = io.connect(process.env.REACT_APP_API_URL || '', {
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionAttempts: 5,
+});
 
 // Sound effects using Web Audio API (no external files needed)
 const playSound = (type) => {

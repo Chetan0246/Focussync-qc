@@ -7,7 +7,7 @@ import WeeklyTrend from '../components/WeeklyTrend';
 import FocusTrend from '../components/FocusTrend';
 import './Dashboard.css';
 
-const API_URL = 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL || '';
 
 function Dashboard() {
   const { roomId } = useParams();

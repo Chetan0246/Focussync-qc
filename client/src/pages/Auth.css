@@ -1155,6 +1155,44 @@
 }
 
 /* ===========================
+   COMING SOON / DISABLED STATES
+   =========================== */
+
+.coming-soon {
+  opacity: 0.6;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.coming-soon:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.coming-soon-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--accent-warning);
+  color: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forgot-link.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.terms-link {
+  color: var(--accent-secondary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===========================
    ACCESSIBILITY
    =========================== */
 

@@ -391,8 +391,8 @@ function Register() {
               />
               <span className="checkbox-custom" />
               <span className="checkbox-label">
-                I agree to the <Link to="/terms" className="terms-link">Terms of Service</Link> and{' '}
-                <Link to="/privacy" className="terms-link">Privacy Policy</Link>
+                I agree to the <span className="terms-link" title="Coming soon">Terms of Service</span> and{' '}
+                <span className="terms-link" title="Coming soon">Privacy Policy</span>
               </span>
             </label>
 

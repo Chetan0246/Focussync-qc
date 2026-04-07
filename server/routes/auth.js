@@ -18,16 +18,26 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
+    // Validate username length
+    if (username.length < 3 || username.length > 20) {
+      return res.status(400).json({ error: 'Username must be between 3 and 20 characters' });
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+
     // Check if user already exists
-    const existingUser = await User.findOne({ 
-      $or: [{ email }, { username }] 
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }]
     });
 
     if (existingUser) {
-      return res.status(400).json({ 
-        error: existingUser.email === email 
-          ? 'Email already registered' 
-          : 'Username already taken' 
+      return res.status(400).json({
+        error: existingUser.email === email
+          ? 'Email already registered'
+          : 'Username already taken'
       });
     }
 
