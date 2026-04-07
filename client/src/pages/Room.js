@@ -6,7 +6,7 @@ import Timer from '../components/Timer';
 import './Room.css';
 
 // Connect to backend server
-const socket = io.connect(process.env.REACT_APP_API_URL || '', {
+const socket = io.connect(process.env.REACT_APP_API_URL || 'http://localhost:5000', {
   reconnection: true,
   reconnectionDelay: 1000,
   reconnectionAttempts: 5,

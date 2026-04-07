@@ -1,12 +1,7 @@
-// Authentication Middleware - Protect routes with JWT
+// Authentication Middleware - JWT
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error('❌ JWT_SECRET environment variable is required.');
-  process.exit(1);
-}
+const JWT_SECRET = process.env.JWT_SECRET || 'focussync-local-dev-secret-2024';
 
 const auth = (req, res, next) => {
   try {

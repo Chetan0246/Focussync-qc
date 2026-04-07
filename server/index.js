@@ -1,5 +1,5 @@
 // FocusSync Backend Server
-// Main entry point - Express + Socket.io + MongoDB
+// Main entry point - Express + Socket.io + MongoDB (Local)
 
 const express = require('express');
 const http = require('http');
@@ -11,107 +11,37 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const morgan = require('morgan');
 
-// ============ Environment Configuration ============
-const isProd = process.env.NODE_ENV === 'production';
-
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/focussync';
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!JWT_SECRET) {
-  console.error('❌ JWT_SECRET environment variable is required. Set it before starting the server.');
-  console.error('   Generate one with: openssl rand -base64 64');
-  process.exit(1);
-}
-
-// Parse client URLs from env (comma-separated)
-const clientUrls = (process.env.CLIENT_URL || 'http://localhost:3000')
-  .split(',')
-  .map(u => u.trim())
-  .filter(Boolean);
-
 const app = express();
 const server = http.createServer(app);
-
-// ============ Security Middleware ============
-
-// Security headers
-app.use(helmet());
-
-// Parse JSON bodies
-app.use(express.json({ limit: '10mb' }));
-
-// Prevent NoSQL injection via query/body sanitization
-app.use(mongoSanitize());
-
-// HTTP request logging
-app.use(morgan(isProd ? 'combined' : 'dev'));
-
-// ============ CORS Configuration ============
-app.use(cors({
-  origin: isProd ? clientUrls : true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
-
-// ============ Rate Limiting ============
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 attempts per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many authentication attempts. Please try again later.' },
-});
-
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100, // 100 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: 'Too many requests. Please try again later.' },
-});
 
 // ============ Socket.io Setup ============
 const io = socketIo(server, {
   cors: {
-    origin: isProd ? clientUrls : true,
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
     credentials: true,
   },
-  pingTimeout: 60000,
-  pingInterval: 25000,
 });
 
-// ============ MongoDB Connection ============
-let dbConnected = false;
+// ============ Middleware ============
+app.use(helmet());
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+app.use(mongoSanitize());
+app.use(morgan('dev'));
 
-mongoose.connection.on('connected', () => {
-  console.log('✅ MongoDB Connected');
-  dbConnected = true;
-});
+// ============ MongoDB Connection (Local) ============
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/focussync';
 
-mongoose.connection.on('error', (err) => {
-  console.error('❌ MongoDB Error:', err.message);
-  dbConnected = false;
-});
+mongoose.connection.on('connected', () => console.log('✅ MongoDB Connected (local)'));
+mongoose.connection.on('error', (err) => console.error('❌ MongoDB Error:', err.message));
+mongoose.connection.on('disconnected', () => console.log('⚠️  MongoDB Disconnected'));
 
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️  MongoDB Disconnected');
-  dbConnected = false;
-});
-
-mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: isProd ? 10000 : 5000,
-  socketTimeoutMS: 45000,
-})
-  .then(() => console.log(`🗄️  MongoDB connection established (${isProd ? 'production' : 'development'})`))
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('🗄️  Connected to local MongoDB (Compass)'))
   .catch((err) => {
     console.error('❌ MongoDB Connection Failed:', err.message);
-    if (isProd) {
-      console.error('Server cannot start without MongoDB in production mode.');
-      process.exit(1);
-    }
+    console.log('💡 Make sure MongoDB is running locally or set MONGODB_URI env var');
   });
 
 // ============ Models ============
@@ -123,36 +53,41 @@ const auth = require('./middleware/auth');
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-    database: dbConnected ? 'connected' : 'disconnected',
-    environment: isProd ? 'production' : 'development',
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
   });
 });
 
-// ============ Routes ============
+// ============ Auth Routes (with rate limiting) ============
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: { error: 'Too many attempts. Try again later.' },
+});
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 
-// Protected API routes
-app.use('/api', apiLimiter, auth); // auth middleware applies to all below
+// ============ Protected API Routes ============
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests.' },
+});
+app.use('/api', apiLimiter, auth);
 app.get('/api/analytics/:roomId', require('./routes/analytics'));
 app.get('/api/leaderboard', require('./routes/leaderboard'));
 app.get('/api/heatmap', require('./routes/heatmap'));
 app.get('/api/user/stats/:userId', require('./routes/userStats'));
 
-// In-memory storage for active sessions (single instance)
+// ============ Active Sessions (in-memory) ============
 const activeSessions = {};
 
 // ============ Socket.io Handlers ============
 io.on('connection', (socket) => {
   console.log('🔌 User connected:', socket.id);
 
-  // User joins a room
   socket.on('join_room', (data) => {
     try {
       const { roomId, username } = data || {};
 
-      // Validate input
       if (!roomId || typeof roomId !== 'string') {
         return socket.emit('error', { message: 'Invalid room ID' });
       }
@@ -203,7 +138,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Start a new session
   socket.on('start_session', async (data) => {
     try {
       const { roomId, duration, userId } = data || {};
@@ -211,9 +145,8 @@ io.on('connection', (socket) => {
       if (!roomId || !duration) {
         return socket.emit('error', { message: 'Missing roomId or duration' });
       }
-
       if (!activeSessions[roomId]) {
-        return socket.emit('error', { message: 'Join a room before starting a session' });
+        return socket.emit('error', { message: 'Join a room before starting' });
       }
 
       console.log(`Starting session in room ${roomId} for ${duration} minutes`);
@@ -240,7 +173,7 @@ io.on('connection', (socket) => {
 
       try {
         await session.save();
-        console.log('💾 Session saved to MongoDB');
+        console.log('💾 Session saved');
       } catch (err) {
         console.error('Error saving session:', err);
       }
@@ -252,16 +185,13 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Handle distraction events
   socket.on('distraction', async (data) => {
     try {
       const { roomId } = data || {};
 
       if (!roomId || !activeSessions[roomId]) {
-        return socket.emit('error', { message: 'No active session to record distraction' });
+        return socket.emit('error', { message: 'No active session' });
       }
-
-      console.log(`Distraction detected in room ${roomId}`);
 
       activeSessions[roomId].distractionCount++;
 
@@ -289,7 +219,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // End session
   socket.on('end_session', async (data) => {
     try {
       const { roomId } = data || {};
@@ -330,51 +259,25 @@ io.on('connection', (socket) => {
     }
   });
 
-  // User disconnects
   socket.on('disconnect', () => {
     console.log('🔌 User disconnected:', socket.id);
   });
 });
 
-// ============ 404 Handler ============
+// ============ 404 & Error Handlers ============
 app.use((req, res) => {
   res.status(404).json({ error: `Route ${req.method} ${req.originalUrl} not found` });
 });
 
-// ============ Error Handler ============
 app.use((err, req, res, _next) => {
   console.error('Unhandled Error:', err);
-  res.status(500).json({
-    error: isProd ? 'Internal server error' : err.message,
-  });
+  res.status(500).json({ error: err.message });
 });
 
-// ============ Graceful Shutdown ============
-const gracefulShutdown = (signal) => {
-  console.log(`\n${signal} received. Shutting down gracefully...`);
-  server.close(() => {
-    console.log('HTTP server closed');
-    mongoose.connection.close().then(() => {
-      console.log('MongoDB connection closed');
-      process.exit(0);
-    }).catch(() => process.exit(1));
-  });
-
-  // Force shutdown after 10 seconds
-  setTimeout(() => {
-    console.log('Forcing shutdown...');
-    process.exit(1);
-  }, 10000);
-};
-
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-
 // ============ Start Server ============
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`🚀 FocusSync Server running on port ${PORT}`);
-  console.log(`📡 Environment: ${isProd ? 'production' : 'development'}`);
-  console.log(`🔗 API: http://localhost:${PORT}`);
+  console.log(`🚀 FocusSync Server running on http://localhost:${PORT}`);
 });
 
 module.exports = { app, server, io };
