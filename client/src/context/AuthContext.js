@@ -35,12 +35,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
-      
+
       return { success: true };
     } catch (err) {
-      return { 
-        success: false, 
-        error: err.response?.data?.error || 'Registration failed' 
+      return {
+        success: false,
+        error: err.response?.data?.error || 'Registration failed'
       };
     }
   };
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
         email,
         password
       });
-      
+
       const { token, user } = res.data;
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
