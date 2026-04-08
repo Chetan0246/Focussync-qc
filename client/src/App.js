@@ -10,25 +10,18 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import TechStack from './pages/TechStack';
 
-// Redirect to /login if NOT authenticated
+// Redirect authenticated users away from login/register
 function PublicOnly({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-screen" />;
   return user ? <Navigate to="/" replace /> : children;
 }
 
-// Redirect to /login if authenticated (protect private routes)
+// Redirect unauthenticated users to login
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="loading-screen" />;
   return user ? children : <Navigate to="/login" replace />;
-}
-
-// Default route: send unauthenticated users to /login, authenticated to /home
-function DefaultRoute() {
-  const { user, loading } = useAuth();
-  if (loading) return <div className="loading-screen" />;
-  return user ? <Navigate to="/" replace /> : <Navigate to="/login" replace />;
 }
 
 function AppRoutes() {
@@ -36,13 +29,16 @@ function AppRoutes() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+        {/* Home is public — guests can see landing page */}
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
         <Route path="/register" element={<PublicOnly><Register /></PublicOnly>} />
+        {/* Room, Dashboard, TechStack require login */}
         <Route path="/room/:roomId" element={<PrivateRoute><Room /></PrivateRoute>} />
         <Route path="/dashboard/:roomId" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/techstack" element={<PrivateRoute><TechStack /></PrivateRoute>} />
-        <Route path="*" element={<DefaultRoute />} />
+        {/* Catch-all: send to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

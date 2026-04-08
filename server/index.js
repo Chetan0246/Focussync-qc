@@ -65,13 +65,19 @@ const authLimiter = rateLimit({
 });
 app.use('/api/auth', authLimiter, require('./routes/auth'));
 
-// ============ Protected API Routes ============
+// ============ Protected API Routes (rate limited + auth) ============
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: { error: 'Too many requests.' },
 });
-app.use('/api', apiLimiter, auth);
+
+// Apply auth middleware only to non-auth routes
+app.use('/api', (req, res, next) => {
+  // Skip rate limiter and auth for /api/auth/* (already handled above)
+  if (req.path.startsWith('/auth')) return next();
+  apiLimiter(req, res, () => auth(req, res, next));
+});
 app.get('/api/analytics/:roomId', require('./routes/analytics'));
 app.get('/api/leaderboard', require('./routes/leaderboard'));
 app.get('/api/heatmap', require('./routes/heatmap'));

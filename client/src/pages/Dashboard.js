@@ -11,7 +11,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 function Dashboard() {
   const { roomId } = useParams();
-  
+
   // State for analytics data
   const [sessions, setSessions] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
@@ -20,15 +20,18 @@ function Dashboard() {
 
   // Fetch all analytics data on mount
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+
     const fetchData = async () => {
       try {
-        const sessionsRes = await axios.get(`${API_URL}/api/analytics/${roomId}`);
+        const sessionsRes = await axios.get(`${API_URL}/api/analytics/${roomId}`, config);
         setSessions(sessionsRes.data || []);
 
-        const leaderboardRes = await axios.get(`${API_URL}/api/leaderboard`);
+        const leaderboardRes = await axios.get(`${API_URL}/api/leaderboard`, config);
         setLeaderboard(leaderboardRes.data || []);
 
-        const heatmapRes = await axios.get(`${API_URL}/api/heatmap`);
+        const heatmapRes = await axios.get(`${API_URL}/api/heatmap`, config);
         setHeatmap(heatmapRes.data || []);
 
         setLoading(false);
@@ -39,8 +42,6 @@ function Dashboard() {
     };
     fetchData();
   }, [roomId]);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   // Load demo data for presentation
   const loadDemoData = async () => {

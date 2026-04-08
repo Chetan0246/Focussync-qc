@@ -3,11 +3,8 @@ const Session = require('../models/Session');
 
 module.exports = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
+    // Use userId from JWT token, not from URL params (prevents auth bypass)
+    const userId = req.userId;
 
     const stats = await Session.aggregate([
       { $match: { userId } },
