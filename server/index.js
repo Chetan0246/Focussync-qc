@@ -31,7 +31,7 @@ app.use(mongoSanitize());
 app.use(morgan('dev'));
 
 // ============ MongoDB Connection (Local) ============
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/focussync';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/focussync-qc';
 
 mongoose.connection.on('connected', () => console.log('✅ MongoDB Connected (local)'));
 mongoose.connection.on('error', (err) => console.error('❌ MongoDB Error:', err.message));
