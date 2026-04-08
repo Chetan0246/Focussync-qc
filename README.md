@@ -100,7 +100,7 @@ The system converts user actions into structured events and derives meaningful i
 
 ---
 
-## 📊 Behavioral Intelligence
+## 📊 Behavioral Analytics
 
 FocusSync analyzes user behavior and provides insights such as:
 
