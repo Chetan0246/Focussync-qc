@@ -162,6 +162,203 @@
   font-weight: 600;
 }
 
+/* ===================================
+   Feature: Behavioral Insights
+   =================================== */
+
+.insights-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-md);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-base);
+}
+
+.insight-item:hover {
+  border-color: var(--accent-primary);
+  transform: translateX(6px);
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
+}
+
+.insight-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+}
+
+.insight-text strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.insight-text p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ===================================
+   Feature: Focus Classification
+   =================================== */
+
+.focus-class-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-md);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+.focus-level-badge {
+  padding: 24px 40px;
+  border-radius: var(--radius-lg);
+  border: 3px solid;
+  text-align: center;
+  min-width: 200px;
+}
+
+.focus-level-label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.focus-level-value {
+  display: block;
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.focus-class-details p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0 0 10px 0;
+}
+
+.focus-class-details p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===================================
+   Feature: Session Efficiency
+   =================================== */
+
+.efficiency-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-md);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+.efficiency-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.efficiency-inner {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.efficiency-value {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.efficiency-label-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.efficiency-details {
+  flex: 1;
+  min-width: 280px;
+}
+
+.efficiency-details p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+.efficiency-bar {
+  width: 100%;
+  height: 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.efficiency-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.efficiency-tip {
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  font-style: italic;
+}
+
 /* Focus Card */
 .focus-card {
   background: var(--bg-card);
@@ -546,5 +743,18 @@
   .heatmap-grid {
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 8px;
+  }
+
+  .focus-class-card,
+  .efficiency-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .insight-item {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 }

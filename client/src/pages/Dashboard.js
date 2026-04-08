@@ -125,14 +125,22 @@ function Dashboard() {
         totalSessions: 0,
         totalFocusTime: 0,
         totalDistractions: 0,
-        avgFocusScore: 0
+        avgFocusScore: 0,
+        // New: Behavioral Insights
+        avgTimeBetweenDistractions: 0,
+        distractionFrequency: '',
+        // New: Focus Classification
+        focusClass: 'N/A',
+        focusClassColor: '',
+        // New: Session Efficiency
+        avgEfficiency: 0,
       };
     }
 
     const totalSessions = sessions.length;
     const totalDistractions = sessions.reduce((sum, s) => sum + (s.distractions || 0), 0);
     const avgFocusScore = sessions.reduce((sum, s) => sum + (s.focusScore || 100), 0) / totalSessions;
-    
+
     // Calculate total focus time in minutes
     let totalFocusTime = 0;
     sessions.forEach(s => {
@@ -142,11 +150,76 @@ function Dashboard() {
       }
     });
 
+    // --- Feature: Behavioral Insights Engine ---
+    // Calculate average time between distractions across all sessions
+    let totalDistractionGaps = 0;
+    let gapCount = 0;
+    sessions.forEach(s => {
+      if (s.events && s.events.length > 2) {
+        // Get only distraction events
+        const distractionEvents = s.events.filter(e => e.type === 'distraction');
+        if (distractionEvents.length >= 2) {
+          for (let i = 1; i < distractionEvents.length; i++) {
+            const gap = (new Date(distractionEvents[i].time) - new Date(distractionEvents[i - 1].time)) / (1000 * 60);
+            totalDistractionGaps += gap;
+            gapCount++;
+          }
+        }
+      }
+    });
+    const avgTimeBetweenDistractions = gapCount > 0 ? Math.round(totalDistractionGaps / gapCount) : 0;
+
+    // Generate simple insight message
+    let distractionFrequency = 'No distractions recorded';
+    if (totalDistractions > 0 && avgTimeBetweenDistractions > 0) {
+      if (avgTimeBetweenDistractions < 5) {
+        distractionFrequency = `You get distracted every ~${avgTimeBetweenDistractions} min — try a quieter environment`;
+      } else if (avgTimeBetweenDistractions < 15) {
+        distractionFrequency = `You stay focused for ~${avgTimeBetweenDistractions} min between distractions — decent!`;
+      } else {
+        distractionFrequency = `Great focus stamina! ~${avgTimeBetweenDistractions} min between distractions`;
+      }
+    } else if (totalDistractions > 0 && avgTimeBetweenDistractions === 0) {
+      distractionFrequency = `${totalDistractions} distraction(s) in ${totalSessions} session(s)`;
+    }
+
+    // --- Feature: Focus Classification ---
+    let focusClass = 'LOW';
+    let focusClassColor = '#ef4444';
+    if (avgFocusScore >= 70) {
+      focusClass = 'HIGH';
+      focusClassColor = '#22c55e';
+    } else if (avgFocusScore >= 40) {
+      focusClass = 'MEDIUM';
+      focusClassColor = '#f59e0b';
+    }
+
+    // --- Feature: Session Efficiency ---
+    // efficiency = actual focus time / total time (accounting for distractions)
+    let totalEfficiency = 0;
+    sessions.forEach(s => {
+      if (s.startTime && s.endTime) {
+        const totalTime = new Date(s.endTime) - new Date(s.startTime);
+        // Assume each distraction costs ~2 minutes of focus time
+        const lostTime = (s.distractions || 0) * 2 * 60 * 1000;
+        const focusTime = Math.max(0, totalTime - lostTime);
+        if (totalTime > 0) {
+          totalEfficiency += (focusTime / totalTime) * 100;
+        }
+      }
+    });
+    const avgEfficiency = totalSessions > 0 ? Math.round(totalEfficiency / totalSessions) : 0;
+
     return {
       totalSessions,
       totalFocusTime: Math.round(totalFocusTime),
       totalDistractions,
-      avgFocusScore: Math.round(avgFocusScore)
+      avgFocusScore: Math.round(avgFocusScore),
+      avgTimeBetweenDistractions,
+      distractionFrequency,
+      focusClass,
+      focusClassColor,
+      avgEfficiency,
     };
   };
 
@@ -266,6 +339,102 @@ Session ${i + 1}:
             <div className="stat-card">
               <div className="stat-value">{stats.totalDistractions}</div>
               <div className="stat-label">Total Distractions</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature: Behavioral Insights Engine */}
+        <div className="section">
+          <h2 className="section-title">🧠 Behavioral Insights</h2>
+          <div className="insights-card">
+            <div className="insight-item">
+              <div className="insight-icon">⏱️</div>
+              <div className="insight-text">
+                <strong>Distraction Pattern</strong>
+                <p>{stats.distractionFrequency}</p>
+              </div>
+            </div>
+            <div className="insight-item">
+              <div className="insight-icon">📈</div>
+              <div className="insight-text">
+                <strong>Avg Focus Score</strong>
+                <p>{stats.avgFocusScore}% — {stats.focusClass} level performance</p>
+              </div>
+            </div>
+            <div className="insight-item">
+              <div className="insight-icon">⚡</div>
+              <div className="insight-text">
+                <strong>Session Efficiency</strong>
+                <p>{stats.avgEfficiency}% of your time was productive focus</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature: Focus Classification */}
+        <div className="section">
+          <h2 className="section-title">🎯 Focus Classification</h2>
+          <div className="focus-class-card">
+            <div className="focus-level-badge" style={{
+              backgroundColor: `${stats.focusClassColor}20`,
+              borderColor: stats.focusClassColor,
+              color: stats.focusClassColor,
+            }}>
+              <span className="focus-level-label">Focus Level</span>
+              <span className="focus-level-value">{stats.focusClass}</span>
+            </div>
+            <div className="focus-class-details">
+              {stats.focusClass === 'HIGH' && (
+                <>
+                  <p>🌟 <strong>Excellent!</strong> You maintain strong focus throughout sessions.</p>
+                  <p>Keep up the great work and challenge yourself with longer sessions.</p>
+                </>
+              )}
+              {stats.focusClass === 'MEDIUM' && (
+                <>
+                  <p>👍 <strong>Good effort.</strong> You have decent focus with room to improve.</p>
+                  <p>Try reducing distractions and extending session duration.</p>
+                </>
+              )}
+              {stats.focusClass === 'LOW' && (
+                <>
+                  <p>🚨 <strong>Needs improvement.</strong> Distractions are affecting your productivity.</p>
+                  <p>Start with shorter sessions in a quiet environment to build focus stamina.</p>
+                </>
+              )}
+              {stats.focusClass === 'N/A' && (
+                <p>Complete some sessions to see your focus classification.</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Feature: Session Efficiency */}
+        <div className="section">
+          <h2 className="section-title">⚡ Session Efficiency</h2>
+          <div className="efficiency-card">
+            <div className="efficiency-circle" style={{
+              background: `conic-gradient(${stats.avgEfficiency >= 60 ? 'var(--accent-primary)' : stats.avgEfficiency >= 30 ? 'var(--accent-warning)' : 'var(--accent-danger)'} ${stats.avgEfficiency * 3.6}deg, var(--bg-tertiary) 0deg)`
+            }}>
+              <div className="efficiency-inner">
+                <span className="efficiency-value">{stats.avgEfficiency}%</span>
+                <span className="efficiency-label-text">Efficiency</span>
+              </div>
+            </div>
+            <div className="efficiency-details">
+              <p>
+                Your <strong>{stats.avgEfficiency}% efficiency</strong> means most of your session time
+                was spent in productive focus.
+              </p>
+              <div className="efficiency-bar">
+                <div className="efficiency-bar-fill" style={{
+                  width: `${stats.avgEfficiency}%`,
+                  backgroundColor: stats.avgEfficiency >= 60 ? 'var(--accent-primary)' : stats.avgEfficiency >= 30 ? 'var(--accent-warning)' : 'var(--accent-danger)'
+                }} />
+              </div>
+              <p className="efficiency-tip">
+                💡 <strong>Tip:</strong> Each distraction costs ~2 minutes of focus. Reduce distractions to boost efficiency.
+              </p>
             </div>
           </div>
         </div>

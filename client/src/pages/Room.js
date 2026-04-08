@@ -82,7 +82,14 @@ function Room() {
   const [username, setUsername] = useState('');
   const [hasJoined, setHasJoined] = useState(false);
   const [showNameInput, setShowNameInput] = useState(true);
-  
+
+  // Feature: Event Stream Panel — stores real-time events for display
+  const [eventStream, setEventStream] = useState([]);
+
+  // Feature: Real-Time Warning — shows when distractions exceed threshold
+  const [showDistractionWarning, setShowDistractionWarning] = useState(false);
+  const DISTRACTION_WARNING_THRESHOLD = 3; // Warn after 3 distractions
+
   const distractionRef = useRef(false);
 
   // Generate random username if not provided
@@ -104,15 +111,25 @@ function Room() {
   // Handle joining with username
   const handleJoinRoom = () => {
     if (!username.trim()) return;
-    
+
     socket.emit('join_room', { roomId, username });
     setHasJoined(true);
     setShowNameInput(false);
+    // Feature: Event Stream — log own join event
+    setEventStream([{ id: Date.now(), type: 'user', message: `${username} joined`, time: new Date() }]);
   };
 
   // Socket event listeners
   useEffect(() => {
     if (!hasJoined) return;
+
+    // Helper: push event to the event stream log (Feature: Event Stream Panel)
+    const pushEvent = (type, message) => {
+      setEventStream(prev => [
+        { id: Date.now(), type, message, time: new Date() },
+        ...prev.slice(0, 49) // Keep last 50 events
+      ]);
+    };
 
     // Listen for room state updates
     socket.on('room_state', (data) => {
@@ -132,6 +149,8 @@ function Room() {
       setEndTime(data.endTime);
       setIsRunning(true);
       playSound('start');
+      // Feature: Event Stream — log session start
+      pushEvent('start', 'Session started');
     });
 
     // Listen for session sync (for late joiners)
@@ -148,6 +167,10 @@ function Room() {
       setStartTime(null);
       playSound('end');
       sendNotification('Session Complete! 🎉', 'Great job! Time for a break.');
+      // Feature: Event Stream — log session end
+      pushEvent('end', 'Session ended');
+      // Clear warning when session ends
+      setShowDistractionWarning(false);
     });
 
     // Listen for user count updates
@@ -162,12 +185,20 @@ function Room() {
         playSound('distraction');
         distractionRef.current = true;
         setTimeout(() => { distractionRef.current = false; }, 2000);
+        // Feature: Event Stream — log distraction
+        pushEvent('distraction', `Distraction #${data.count}`);
+        // Feature: Real-Time Warning — show if distractions exceed threshold
+        if (data.count >= DISTRACTION_WARNING_THRESHOLD) {
+          setShowDistractionWarning(true);
+        }
       }
     });
 
     // Listen for users list
     socket.on('users_list', (userList) => {
       setUsers(userList);
+      // Feature: Event Stream — log user join
+      pushEvent('user', `${userList[userList.length - 1] || 'A user'} joined`);
     });
 
     // Cleanup on unmount
@@ -374,6 +405,43 @@ function Room() {
             </div>
           </div>
         </div>
+
+        {/* Feature: Real-Time Distraction Warning */}
+        {showDistractionWarning && (
+          <div className="distraction-warning-card">
+            <div className="warning-icon">⚠️</div>
+            <div className="warning-content">
+              <h3>Too Many Distractions!</h3>
+              <p>
+                You've had <strong>{distractionCount} distractions</strong>.
+                Try closing other tabs and putting your phone away.
+              </p>
+            </div>
+            <button className="warning-dismiss" onClick={() => setShowDistractionWarning(false)}>
+              ✕
+            </button>
+          </div>
+        )}
+
+        {/* Feature: Event Stream Panel */}
+        {hasJoined && (
+          <div className="card event-stream-card">
+            <h3 className="card-subtitle">📡 Live Event Stream</h3>
+            <div className="event-stream">
+              {eventStream.length > 0 ? (
+                eventStream.map(event => (
+                  <div key={event.id} className={`event-item event-${event.type}`}>
+                    <span className="event-badge">{event.type}</span>
+                    <span className="event-message">{event.message}</span>
+                    <span className="event-time">{event.time.toLocaleTimeString()}</span>
+                  </div>
+                ))
+              ) : (
+                <span className="no-events">No events yet. Start a session to see live updates.</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Tips Section */}
         <div className="tips-card">
