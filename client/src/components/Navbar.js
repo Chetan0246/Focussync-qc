@@ -1,4 +1,6 @@
 // Navbar Component - Navigation bar for the app
+// Syllabus: Section 7 - Bootstrap (navbar, container, grid classes)
+// Syllabus: Section 7 - CSS (selectors, pseudo-classes, flexbox)
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -14,32 +16,34 @@ function Navbar() {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        {/* Logo/Brand */}
-        <Link to="/" className="navbar-brand">
-          <span className="brand-icon">🎯</span>
-          <span className="brand-text">FocusSync</span>
+    // Syllabus: Section 3 - HTML5 semantic <nav> tag
+    // Syllabus: Section 7 - Bootstrap navbar classes
+    <nav className="navbar navbar-expand-lg">
+      <div className="container-fluid">
+        {/* Logo/Brand - Syllabus: Section 3 - HTML5 semantic <nav> */}
+        <Link to="/" className="navbar-brand d-flex align-items-center">
+          <span className="brand-icon me-2">🎯</span>
+          <span className="brand-text fw-bold">FocusSync</span>
         </Link>
 
-        {/* Navigation Links */}
-        <div className="navbar-links">
-          <Link to="/" className="navbar-link">Home</Link>
-          <Link to="/dashboard/global" className="navbar-link">Leaderboard</Link>
-          <Link to="/techstack" className="navbar-link tech-link">Tech Stack</Link>
-          
-          {/* User Menu */}
+        {/* Navigation Links - Syllabus: Section 7 - Bootstrap flex utilities */}
+        <div className="d-flex align-items-center gap-3 flex-wrap">
+          <Link to="/" className="nav-link-custom">Home</Link>
+          <Link to="/dashboard/global" className="nav-link-custom">Leaderboard</Link>
+          <Link to="/techstack" className="nav-link-custom">Tech Stack</Link>
+
+          {/* User Menu - Syllabus: Section 2.3 - JavaScript conditionals */}
           {user ? (
-            <div className="user-menu">
-              <span className="user-greeting">👤 {user.username}</span>
-              <button onClick={handleLogout} className="btn btn-secondary logout-btn">
+            <div className="d-flex align-items-center gap-2">
+              <span className="text-muted">👤 {user.username}</span>
+              <button onClick={handleLogout} className="btn btn-outline-danger btn-sm">
                 Logout
               </button>
             </div>
           ) : (
-            <div className="auth-buttons">
-              <Link to="/login" className="btn btn-secondary">Login</Link>
-              <Link to="/register" className="btn btn-primary">Sign Up</Link>
+            <div className="d-flex gap-2">
+              <Link to="/login" className="btn btn-outline-primary btn-sm">Login</Link>
+              <Link to="/register" className="btn btn-primary btn-sm">Sign Up</Link>
             </div>
           )}
         </div>

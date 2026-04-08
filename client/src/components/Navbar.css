@@ -1,49 +1,34 @@
-/* Navbar Styles - Advanced Portfolio Version */
+/* Navbar Styles
+   Syllabus: Section 4 - CSS3 selectors (class, pseudo-class)
+   Syllabus: Section 5 - CSS link, list, table properties, box model
+   Syllabus: Section 6 - Box model, positioning, responsive design
+*/
 
 .navbar {
-  background: var(--bg-glass);
-  backdrop-filter: var(--blur-lg);
-  -webkit-backdrop-filter: var(--blur-lg);
-  padding: 16px 0;
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-md);
   border-bottom: 1px solid var(--border-color);
+  padding: 12px 24px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
   box-shadow: var(--shadow-md);
-  animation: fadeInDown 0.6s ease-out;
+  transition: all var(--transition-base);
 }
 
-.navbar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--gradient-primary);
-  animation: gradientShift 3s ease infinite;
-  background-size: 200% 200%;
-}
-
-.navbar-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Syllabus: Section 4 - CSS pseudo-class hover */
+.navbar:hover {
+  box-shadow: var(--shadow-lg);
 }
 
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
   text-decoration: none;
   color: var(--text-primary);
-  font-size: 26px;
-  font-weight: 800;
+  font-weight: 700;
+  font-size: 20px;
   transition: all var(--transition-base);
-  position: relative;
 }
 
 .navbar-brand:hover {
@@ -51,9 +36,7 @@
 }
 
 .brand-icon {
-  font-size: 32px;
-  animation: float 3s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  font-size: 24px;
 }
 
 .brand-text {
@@ -61,174 +44,29 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradientShift 3s ease infinite;
-  background-size: 200% 200%;
 }
 
-.navbar-links {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.navbar-link {
+.nav-link-custom {
   color: var(--text-secondary);
   text-decoration: none;
-  font-weight: 600;
-  transition: all var(--transition-base);
-  padding: 10px 18px;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 6px 12px;
   border-radius: var(--radius-md);
-  position: relative;
-  overflow: hidden;
+  transition: all var(--transition-base);
 }
 
-.navbar-link::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: var(--gradient-primary);
-  transform: translateX(-50%);
-  transition: width var(--transition-base);
-}
-
-.navbar-link:hover::before {
-  width: 80%;
-}
-
-.navbar-link:hover {
+/* Syllabus: Section 4 - CSS pseudo-class hover */
+.nav-link-custom:hover {
   color: var(--accent-primary);
   background: rgba(34, 197, 94, 0.1);
-  transform: translateY(-2px);
 }
 
-/* Tech Stack link - highlighted */
-.tech-link {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(34, 197, 94, 0.15));
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  color: var(--accent-secondary);
-  position: relative;
-}
-
-.tech-link::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
-  transform: rotate(45deg);
-  animation: shimmer 3s infinite;
-}
-
-.tech-link:hover {
-  border-color: var(--accent-secondary);
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(34, 197, 94, 0.25));
-  color: #93c5fd;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* User Menu */
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.user-greeting {
-  color: var(--text-secondary);
-  font-size: 14px;
-  padding: 10px 18px;
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border-color);
-  font-weight: 600;
-  transition: all var(--transition-base);
-}
-
-.user-greeting:hover {
-  border-color: var(--accent-primary);
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--accent-primary);
-}
-
-.logout-btn {
-  padding: 10px 22px;
-  font-size: 14px;
-}
-
-/* Auth Buttons */
-.auth-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.auth-buttons .btn {
-  padding: 10px 22px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-/* Mobile Menu Toggle (for future implementation) */
-.navbar-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-base);
-}
-
-.navbar-toggle:hover {
-  background: var(--bg-tertiary);
-}
-
-.navbar-toggle span {
-  width: 24px;
-  height: 3px;
-  background: var(--text-primary);
-  border-radius: var(--radius-full);
-  transition: all var(--transition-base);
-}
-
-/* Responsive */
+/* Syllabus: Section 2.3 - JS DOM manipulation via jQuery/CSS */
 @media (max-width: 768px) {
-  .navbar-container {
+  .navbar {
+    padding: 10px 16px;
     flex-direction: column;
-    gap: 16px;
-  }
-
-  .navbar-links {
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .user-menu {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .auth-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .auth-buttons .btn {
-    width: 100%;
-  }
-  
-  .navbar-brand {
-    font-size: 22px;
+    gap: 10px;
   }
 }

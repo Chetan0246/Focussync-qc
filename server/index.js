@@ -30,6 +30,9 @@ app.use(express.json({ limit: '10mb' }));
 app.use(mongoSanitize());
 app.use(morgan('dev'));
 
+// Trust proxy headers (fixes express-rate-limit X-Forwarded-For warning)
+app.set('trust proxy', 1);
+
 // ============ MongoDB Connection (Local) ============
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/focussync-qc';
 
