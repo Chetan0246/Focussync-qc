@@ -1,267 +1,235 @@
-# FocusSync
+# 🚀 FocusSync
 
-A real-time collaborative study platform built with the MERN stack (MongoDB, Express, React, Node.js) and Socket.io.
-
-## 🌟 Features
-
-### Authentication
-1. **🔐 User Accounts** - Signup/Login with JWT tokens, persistent sessions
-2. **👤 User Profiles** - Join rooms with a username, see active users list
-
-### Productivity
-3. **⌨️ Keyboard Shortcuts** - Space to start, E to end, D to test distraction
-4. **🔔 Desktop Notifications** - Browser notifications for session events
-5. **🔊 Sound Effects** - Audio feedback using Web Audio API (no external files)
-6. **📥 Export Report** - Download session report as text file
-
-### Analytics
-7. **📊 Analytics Dashboard** - Track sessions, focus scores, and productivity
-8. **📈 Focus Score Trend** - Line chart showing focus score improvement over time
-9. **🏆 Achievement Badges** - Earn badges for milestones
-10. **🔥 Activity Heatmap** - Visualize study patterns
-11. **📦 Demo Data** - Load sample data for presentations
+### A Real-Time Behavioral Monitoring and Distributed Synchronization System
 
 ---
 
-## Features
+## 🧠 Overview
 
-- 🎯 **Real-time Timer Sync** - All users in a room see the same countdown timer
-- 👥 **Multi-user Rooms** - Study together with friends in real-time
-- ⚠️ **Distraction Detection** - Uses Page Visibility API to detect when you switch tabs
-- 📊 **Analytics Dashboard** - Track sessions, focus scores, and productivity
-- 🏆 **Leaderboard** - Compete with other rooms for most focus time
-- 🔥 **Activity Heatmap** - Visualize your study patterns
-- 🎖️ **Achievements** - Unlock badges for your accomplishments
-- 📈 **Weekly Trends** - See your progress over time (Recharts)
-- 📉 **Focus Score Trend** - Track improvement with line charts
-- 🔔 **Notifications** - Desktop alerts for session events
-- 🎵 **Sound Effects** - Audio feedback for actions
-- 🔐 **User Accounts** - JWT authentication with persistent login
+FocusSync is a real-time, event-driven web application that synchronizes study sessions across multiple users while analyzing behavioral patterns such as distraction frequency, focus efficiency, and productivity trends.
+
+Unlike traditional timer applications, FocusSync uses a **server-authoritative architecture** to ensure consistency across distributed clients and prevent client-side manipulation.
+
+> 💡 FocusSync transforms human behavior into measurable system events and actionable insights.
 
 ---
 
-## Project Structure
+## 🎯 Core Innovation
+
+FocusSync goes beyond a typical productivity tool by integrating:
+
+* ⏱️ **Server-controlled synchronization** (prevents cheating and ensures consistency)
+* 🔁 **Event-driven architecture** using WebSockets
+* 👁️ **Behavioral monitoring** using browser APIs (Page Visibility API)
+* 📊 **Analytics-driven feedback** (focus score, trends, insights)
+
+The system converts user actions into structured events and derives meaningful insights from them.
+
+---
+
+## 🏗️ System Architecture
 
 ```
-FocusSync/
-├── client/          # React frontend (create-react-app)
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       │   ├── Navbar.js
-│       │   ├── Timer.js
-│       │   ├── Achievements.js      ← NEW
-│       │   └── WeeklyTrend.js       ← NEW
-│       └── pages/
-│           ├── Home.js
-│           ├── Room.js              ← ENHANCED
-│           ├── Dashboard.js         ← ENHANCED
-│           └── TechStack.js         ← NEW
-├── server/          # Node.js + Express backend
-│   └── index.js
-└── package.json
+┌─────────────┐      WebSocket      ┌─────────────┐      Mongoose      ┌─────────────┐
+│   React     │ ←──────────────────→ │  Node.js    │ ←───────────────→  │   MongoDB   │
+│  (Client)   │      HTTP REST      │  (Server)   │                     │ (Database)  │
+└─────────────┘                     └─────────────┘                     └─────────────┘
+```
+
+### Key Principle:
+
+👉 The **server is the single source of truth** for time and session state.
+
+---
+
+## ⚙️ Engineering Concepts Demonstrated
+
+* Real-time synchronization using **Socket.io (WebSockets)**
+* **Server-authoritative state management**
+* Handling **late joiners** with consistent timer state
+* Event-driven communication model
+* Behavioral tracking using **Page Visibility API**
+* Time-series analytics using MongoDB
+* Distributed system consistency across multiple clients
+
+---
+
+## 🔁 System Workflow
+
+1. User joins a room
+2. Server maintains session state (start time, end time)
+3. Timer is synchronized across all clients
+4. Distractions are detected via browser visibility changes
+5. Events are logged and stored in MongoDB
+6. Analytics engine processes data and generates insights
+
+---
+
+## 🧩 System Capabilities
+
+### 🔹 Real-Time System
+
+* Synchronized timer across users
+* Multi-user room support
+* Late join synchronization
+
+### 🔹 Behavioral Monitoring
+
+* Distraction detection (tab switch / minimize)
+* Focus score calculation
+* Real-time warning system
+
+### 🔹 Analytics & Insights
+
+* Focus efficiency tracking
+* Session timelines (event history)
+* Behavioral insights (distraction patterns)
+
+### 🔹 Visualization
+
+* Analytics dashboard
+* Activity heatmap
+* Weekly trends & focus score graph
+
+### 🔹 Supporting Features
+
+* Keyboard shortcuts
+* Desktop notifications
+* Sound feedback
+* Exportable reports
+
+---
+
+## 📊 Behavioral Intelligence
+
+FocusSync analyzes user behavior and provides insights such as:
+
+* “You get distracted every ~6 minutes”
+* “Focus drops after the first 10 minutes”
+* Focus Level: **HIGH / MEDIUM / LOW**
+* Efficiency Score: **Focus Time / Total Session Time**
+
+---
+
+## 📡 Socket.io Events
+
+### Client → Server
+
+* `join_room` → Join study session
+* `start_session` → Start focus timer
+* `end_session` → End session
+* `distraction` → Report distraction
+
+### Server → Client
+
+* `session_started` → Start timer
+* `session_sync` → Sync late users
+* `distraction_count` → Update distractions
+* `user_count` → Active users
+
+---
+
+## 🗄️ Data Model (Session)
+
+```json
+{
+  "roomId": "abc123",
+  "startTime": "Date",
+  "endTime": "Date",
+  "distractions": 3,
+  "focusScore": 70,
+  "events": [
+    { "type": "start", "time": "Date" },
+    { "type": "distraction", "time": "Date" }
+  ]
+}
 ```
 
 ---
 
-## Prerequisites
+## 🚀 Getting Started
 
-- Node.js (v14 or higher)
-- MongoDB (running locally on port 27017)
+### Prerequisites
 
----
+* Node.js
+* MongoDB (local or Atlas)
 
-## Installation
+### Installation
 
-1. **Install dependencies:**
-   ```bash
-   npm run install:all
-   ```
+```bash
+npm run install:all
+```
 
-2. **Start MongoDB** (if not already running):
-   ```bash
-   mongod
-   ```
+### Run Application
 
----
-
-## Running the Application
-
-### Option 1: Run both together
 ```bash
 npm run dev
 ```
 
-### Option 2: Run separately (in different terminals)
-
-**Terminal 1 - Backend:**
-```bash
-npm run start:backend
-```
-
-**Terminal 2 - Frontend:**
-```bash
-npm run start:frontend
-```
+Frontend: http://localhost:3000
+Backend: http://localhost:5000
 
 ---
 
-## Usage
+## 🧪 Demonstration Flow (Recommended)
 
-1. Open `http://localhost:3000` in your browser
-2. Create a new room or join an existing one
-3. Enter your username and join
-4. Start a focus session (15, 25, 45, or 60 minutes)
-5. Stay focused! Switching tabs counts as a distraction
-6. View your analytics on the Dashboard
-7. **For Presentation:** Click "Load Demo Data" to show all features
-
----
-
-## Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| `Space` | Start session |
-| `E` | End session |
-| `D` | Test distraction (debug) |
+1. Open 2 browser tabs
+2. Join same room
+3. Start session
+4. Observe real-time synchronization
+5. Switch tab → distraction detected
+6. Open dashboard → view analytics
 
 ---
 
-## API Endpoints
+## ❓ Why Not a Normal Timer?
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/analytics/:roomId` | Get all sessions for a room |
-| `GET /api/leaderboard` | Get top rooms by focus time |
-| `GET /api/heatmap` | Get sessions grouped by date |
+Traditional timers:
 
----
+* Client-controlled
+* No synchronization
+* No behavioral tracking
 
-## Socket.io Events
+FocusSync:
 
-### Client → Server
-- `join_room` - Join a study room (with username)
-- `start_session` - Start a new focus session
-- `end_session` - End current session
-- `distraction` - Report a distraction
+* Server-controlled timing
+* Real-time synchronization
+* Behavioral analytics and insights
 
-### Server → Client
-- `room_state` - Current room state
-- `session_started` - Session has started
-- `session_sync` - Sync timer for late joiners
-- `session_ended` - Session has ended
-- `user_count` - Number of users online
-- `distraction_count` - Total distractions
-- `users_list` - List of usernames in room
+👉 This transforms it into a **distributed system**, not just a utility app.
 
 ---
 
-## Tech Stack
+## 🎓 Academic Value
 
-**Frontend:**
-- React 18
-- React Router DOM
-- Socket.io Client
-- Axios
+This project demonstrates:
 
-**Backend:**
-- Node.js
-- Express
-- Socket.io
-- MongoDB with Mongoose
-
-**Browser APIs:**
-- Page Visibility API (distraction detection)
-- Notification API (desktop alerts)
-- Web Audio API (sound effects)
+* Full-stack MERN development
+* Real-time communication systems
+* Distributed system concepts
+* Browser API integration
+* Data analytics and visualization
 
 ---
 
-## Viva Preparation
+## 🧠 Viva One-Liner
 
-### Architecture
-```
-┌─────────────┐      WebSocket      ┌─────────────┐      Mongoose      ┌─────────────┐
-│   React     │ ←──────────────────→ │  Node.js    │ ←───────────────→  │   MongoDB   │
-│  (Port 3000)│      HTTP REST      │ (Port 5000) │                     │ (Port 27017)│
-└─────────────┘                     └─────────────┘                     └─────────────┘
-```
-
-### Common Viva Questions
-
-1. **How does real-time sync work?**
-   - Using Socket.io WebSockets for bidirectional communication between client and server
-
-2. **How are distractions detected?**
-   - Page Visibility API (`document.hidden`) detects when user switches tabs or minimizes window
-
-3. **Why MongoDB?**
-   - Flexible schema for session events, good for time-series data, easy aggregation for analytics
-
-4. **How is timer kept in sync across users?**
-   - Server stores `endTime`, clients calculate remaining time based on server time
-
-5. **What happens when a user joins late?**
-   - New users receive `session_sync` event with current timer state (endTime)
-
-6. **How do keyboard shortcuts work?**
-   - `window.addEventListener('keydown')` captures key presses, prevents default for Space/E
-
-7. **How do desktop notifications work?**
-   - Browser Notification API with permission request, triggered on session events
+> “FocusSync is a real-time distributed system that synchronizes user sessions using a server-authoritative architecture while analyzing behavioral patterns like distractions and focus efficiency.”
 
 ---
 
-## Pages
+## 📌 Conclusion
 
-| Page | Route | Description |
-|------|-------|-------------|
-| Home | `/` | Join or create rooms |
-| Room | `/room/:roomId` | Study room with timer |
-| Dashboard | `/dashboard/:roomId` | Analytics and insights |
-| Tech Stack | `/techstack` | Architecture & viva prep |
+FocusSync is not just a study tool — it is a **behavior-aware real-time system** that combines synchronization, monitoring, and analytics to improve productivity through data-driven insights.
 
 ---
 
-## Screenshots
-
-### Features Demonstrated
-- ✅ WebSockets (real-time sync)
-- ✅ Browser APIs (Visibility, Notifications, Audio)
-- ✅ REST APIs (analytics endpoints)
-- ✅ MongoDB Aggregation (leaderboard, heatmap)
-- ✅ React Hooks (useState, useEffect)
-- ✅ Dynamic Routing (React Router)
-- ✅ Event-driven Architecture (Socket.io)
-
----
-
-## Troubleshooting
-
-**MongoDB Connection Error:**
-```bash
-# Check if MongoDB is running
-net start MongoDB
-
-# Or start manually
-mongod
-```
-
-**Port Already in Use:**
-```bash
-# Kill process on port 5000 or 3000
-# Windows: Use Resource Monitor or restart
-```
-
----
-
-## License
+## 📜 License
 
 MIT
 
 ---
 
-## Credits
+## 👨‍💻 Author
 
-Built for Web Technologies Subject Project 🎓
+Built for Web Technologies Project 🎓
